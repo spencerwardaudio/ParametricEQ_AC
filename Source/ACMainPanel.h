@@ -14,6 +14,7 @@
 #include "ACPanelBase.h"
 #include "ACBottomPanel.h"
 
+
 class ACMainPanel
 :   public ACPanelBase
 {
@@ -26,4 +27,5 @@ public:
 private:
     
     std::unique_ptr<ACBottomPanel> mBottomPanel;
+
 };

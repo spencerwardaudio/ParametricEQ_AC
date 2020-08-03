@@ -37,6 +37,10 @@ MultiAvptslAudioProcessorEditor::MultiAvptslAudioProcessorEditor (MultiAvptslAud
     mMainPanel->setBounds(0, 100, 150, 200);
     addAndMakeVisible(mMainPanel.get());
     
+    mBottomRightPanel = std::make_unique<ACBottomRightPanel>(&processor);
+    mBottomRightPanel->setBounds(350, 100, 150, 200);
+    addAndMakeVisible(mBottomRightPanel.get());
+    
     mLookAndFeel = std::make_unique<ACLookAndFeel>();
     bandEditors[0]->setLookAndFeel(mLookAndFeel.get());
 //    LookAndFeel::setDefaultLookAndFeel(mLookAndFeel.get());
@@ -358,7 +362,14 @@ index(i),
 
 
 {
+    
+    //    String ID = "Freq1";
 
+        
+    //    for (int r = 1; r < 2; r++)
+    //    {
+    //
+    //       String m =  ID.replaceSection(4, 1, (String)r);
     addAndMakeVisible (frequencyCutoff1);
     addAndMakeVisible (frequencyCutoff2);
     addAndMakeVisible (frequencyCutoff3);

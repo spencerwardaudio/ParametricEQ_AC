@@ -4,6 +4,10 @@
               displaySplashScreen="1">
   <MAINGROUP id="GLw8Js" name="MultiAVPTSL">
     <GROUP id="{DE0377AD-AF18-92B0-3265-5EB80028D97A}" name="Panels">
+      <FILE id="AH0UkK" name="ACBottomRightPanel.cpp" compile="1" resource="0"
+            file="Source/ACBottomRightPanel.cpp"/>
+      <FILE id="zNewOv" name="ACBottomRightPanel.h" compile="0" resource="0"
+            file="Source/ACBottomRightPanel.h"/>
       <FILE id="iKlPwe" name="ACBottomPanel.cpp" compile="1" resource="0"
             file="Source/ACBottomPanel.cpp"/>
       <FILE id="gsWwAi" name="ACBottomPanel.h" compile="0" resource="0" file="Source/ACBottomPanel.h"/>

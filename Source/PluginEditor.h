@@ -19,6 +19,7 @@
 #include "ACParameters.h"
 
 #include "ACMainPanel.h"
+#include "ACBottomRightPanel.h"
 #include "ACLookAndFeel.h"
 
 #include "ACAnalyzer.h"
@@ -113,6 +114,7 @@ private:
     OwnedArray<AudioProcessorValueTreeState::SliderAttachment> attachments;
 
     std::unique_ptr<ACMainPanel> mMainPanel;
+    std::unique_ptr<ACBottomRightPanel> mBottomRightPanel;
     std::unique_ptr<ACLookAndFeel> mLookAndFeel;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MultiAvptslAudioProcessorEditor)
