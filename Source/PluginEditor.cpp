@@ -84,7 +84,27 @@ void MultiAvptslAudioProcessorEditor::paint (Graphics& g)
     g.strokePath (analyzerPath, PathStrokeType (1.0));
     processor.createAnalyserPlot (analyzerPath, plotFrame, 20.0f, false);
     
+    //creating the plotFrame grid outlines
+    g.setColour (Colours::darkgrey.withAlpha (0.8f));
+    g.drawRoundedRectangle(plotFrame.toFloat(), 10, 2);
+    for (int i = 0; i < 12; i++)
+    {
+        auto x = plotFrame.getX() + plotFrame.getWidth() * i * 0.1f;
+        if (i > 0) g.drawVerticalLine (roundToInt(x), plotFrame.getY(), plotFrame.getBottom());
+        
+        auto freq = getFrequencyForPosition(i * 0.1f);
+        g.drawFittedText((freq < 1000) ? String (freq) + " Hz" : String (freq / 1000, 1) + " kHz", roundToInt(x+3), plotFrame.getBottom() - 20, 50, 15, Justification::left, 1);
+    }
     
+    g.drawHorizontalLine(roundToInt(plotFrame.getY() + 0.25 * plotFrame.getHeight()), plotFrame.getX(), plotFrame.getRight());
+    
+    g.drawHorizontalLine(roundToInt(plotFrame.getY() + 0.75 * plotFrame.getHeight()), plotFrame.getX(), plotFrame.getRight());
+    
+    g.drawFittedText(String(24.0f) + " dB", plotFrame.getX() + 5, plotFrame.getY() + 2, 50, 15, Justification::left, 1);
+    g.drawFittedText(String(12.0f) + " dB", plotFrame.getX() + 5, roundToInt (plotFrame.getY() + 2 + (0.25 * plotFrame.getHeight())), 50, 15, Justification::left, 1);
+    g.drawFittedText(String(0.0f) + " dB", plotFrame.getX() + 5, roundToInt (plotFrame.getY() + 2 + (0.5 * plotFrame.getHeight())), 50, 15, Justification::left, 1);
+    g.drawFittedText(String(-12.0f) + " dB", plotFrame.getX() + 5, roundToInt (plotFrame.getY() + 2 + (0.75 * plotFrame.getHeight())), 50, 15, Justification::left, 1);
+
 }
 
 void MultiAvptslAudioProcessorEditor::resized()
@@ -426,7 +446,7 @@ void MultiAvptslAudioProcessorEditor::BandEditor::resized ()
     frequencyCutoff4.setBounds (fcX, yPadding, slider_size, slider_size);
     frequencyCutoff5.setBounds (fcX, yPadding, slider_size, slider_size);
     
-    int qX = 200;
+    int qX = fcX + 75;
     
     Q1.setBounds (qX, yPadding, slider_size, slider_size);
     Q2.setBounds (qX, yPadding, slider_size, slider_size);
@@ -434,7 +454,7 @@ void MultiAvptslAudioProcessorEditor::BandEditor::resized ()
     Q4.setBounds (qX, yPadding, slider_size, slider_size);
     Q5.setBounds (qX, yPadding, slider_size, slider_size);
     
-    int gX = 275;
+    int gX = qX + 75;
     
     Gain1.setBounds (gX, yPadding, slider_size, slider_size);
     Gain2.setBounds (gX, yPadding, slider_size, slider_size);
@@ -442,31 +462,11 @@ void MultiAvptslAudioProcessorEditor::BandEditor::resized ()
     Gain4.setBounds (gX, yPadding, slider_size, slider_size);
     Gain5.setBounds (gX, yPadding, slider_size, slider_size);
     
-//    x = x+100;
-//
-//    frequencyCutoff2.setBounds (x, 0, w, h);
-//
-//    x = x+100;
-//
-//    frequencyCutoff3.setBounds (x, 0, w, h);
-//
-//    x = x+100;
-//
-//    frequencyCutoff4.setBounds (x, 0, w, h);
-//
-//    x = x+100;
-//
-//    frequencyCutoff5.setBounds (x, 0, w, h);
-    
 }
 
 void MultiAvptslAudioProcessorEditor::BandEditor::setFrequency (float freq)
 {
     frequencyCutoff1.setValue (freq, sendNotification);
-//    frequencyCutoff2.setValue (freq, sendNotification);
-//    frequencyCutoff3.setValue (freq, sendNotification);
-//    frequencyCutoff4.setValue (freq, sendNotification);
-//    frequencyCutoff5.setValue (freq, sendNotification);
     
 }
 
