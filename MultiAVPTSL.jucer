@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="OWSgyW" name="MultiAVPTSL" projectType="audioplug" jucerVersion="5.4.7"
-              displaySplashScreen="1">
+<JUCERPROJECT id="OWSgyW" name="MultiAVPTSL" projectType="audioplug" displaySplashScreen="1"
+              jucerFormatVersion="1">
   <MAINGROUP id="GLw8Js" name="MultiAVPTSL">
     <GROUP id="{DE0377AD-AF18-92B0-3265-5EB80028D97A}" name="Panels">
       <FILE id="AH0UkK" name="ACBottomRightPanel.cpp" compile="1" resource="0"
             file="Source/ACBottomRightPanel.cpp"/>
       <FILE id="zNewOv" name="ACBottomRightPanel.h" compile="0" resource="0"
             file="Source/ACBottomRightPanel.h"/>
-      <FILE id="iKlPwe" name="ACBottomPanel.cpp" compile="1" resource="0"
-            file="Source/ACBottomPanel.cpp"/>
-      <FILE id="gsWwAi" name="ACBottomPanel.h" compile="0" resource="0" file="Source/ACBottomPanel.h"/>
+      <FILE id="iKlPwe" name="ACBottomLeftPanel.cpp" compile="1" resource="0"
+            file="Source/ACBottomLeftPanel.cpp"/>
+      <FILE id="gsWwAi" name="ACBottomLeftPanel.h" compile="0" resource="0"
+            file="Source/ACBottomLeftPanel.h"/>
       <FILE id="IHZeJX" name="ACMainPanel.cpp" compile="1" resource="0" file="Source/ACMainPanel.cpp"/>
       <FILE id="UDWmae" name="ACMainPanel.h" compile="0" resource="0" file="Source/ACMainPanel.h"/>
       <FILE id="YvVQAP" name="ACPanelBase.cpp" compile="1" resource="0" file="Source/ACPanelBase.cpp"/>
@@ -39,11 +40,16 @@
       <FILE id="Y2rkTy" name="ACAudioHelpers.h" compile="0" resource="0"
             file="Source/ACAudioHelpers.h"/>
       <FILE id="iYrwWi" name="ACLookAndFeel.h" compile="0" resource="0" file="Source/ACLookAndFeel.h"/>
+      <FILE id="KykKEM" name="ACDisplayPresetButtons.h" compile="0" resource="0"
+            file="Source/ACDisplayPresetButtons.h"/>
       <FILE id="QIzd4I" name="ACParameters.h" compile="0" resource="0" file="Source/ACParameters.h"/>
     </GROUP>
     <GROUP id="{3510B5D9-60BD-ABCA-6191-57BD864C1363}" name="Graphical Assets">
       <FILE id="hfinjj" name="AC_knob.png" compile="0" resource="1" file="Graphical Assets/AC_knob.png"/>
       <FILE id="d2YRHU" name="ACSize_bg.png" compile="0" resource="1" file="Graphical Assets/ACSize_bg.png"/>
+      <FILE id="C7aZRA" name="AC_New.svg" compile="0" resource="1" file="Graphical Assets/AC_New.svg"/>
+      <FILE id="ixqXTi" name="AC_Save.svg" compile="0" resource="1" file="Graphical Assets/AC_Save.svg"/>
+      <FILE id="cuHROQ" name="AC_SaveAs.svg" compile="0" resource="1" file="Graphical Assets/AC_SaveAs.svg"/>
     </GROUP>
     <GROUP id="{862EB9B9-13D8-D092-D615-B4712674D849}" name="Source">
       <FILE id="ErWiHN" name="PluginProcessor.h" compile="0" resource="0"
@@ -104,5 +110,6 @@
   <LIVE_SETTINGS>
     <OSX/>
   </LIVE_SETTINGS>
-  <JUCEOPTIONS JUCE_VST3_CAN_REPLACE_VST2="0" JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+  <JUCEOPTIONS JUCE_VST3_CAN_REPLACE_VST2="0" JUCE_STRICT_REFCOUNTEDPOINTER="1"
+               JUCE_ENABLE_LIVE_CONSTANT_EDITOR="1"/>
 </JUCERPROJECT>

@@ -16,7 +16,7 @@ ACMainPanel::ACMainPanel(MultiAvptslAudioProcessor* inProcessor)
 {
     setSize(MAIN_PANEL_WIDTH, MAIN_PANEL_HEIGHT);
     
-    mBottomPanel = std::make_unique<ACBottomPanel>(inProcessor);
+    mBottomPanel = std::make_unique<ACBottomLeftPanel>(inProcessor);
     mBottomPanel->setTopLeftPosition(0, 0);
     addAndMakeVisible(mBottomPanel.get());
     

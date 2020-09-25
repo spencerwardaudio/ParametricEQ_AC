@@ -43,11 +43,6 @@ MultiAvptslAudioProcessorEditor::MultiAvptslAudioProcessorEditor (MultiAvptslAud
     
     mLookAndFeel = std::make_unique<ACLookAndFeel>();
     bandEditors[0]->setLookAndFeel(mLookAndFeel.get());
-//    LookAndFeel::setDefaultLookAndFeel(mLookAndFeel.get());
-        
-//    }
-    
-//    mXYPoints->addComponentListener(this);
     
     setSize(500, 200);
         
@@ -130,9 +125,7 @@ void MultiAvptslAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster*
 {
             ignoreUnused (sender);
             updateFrequencyResponses();
-  
-//    auto priorDot = mXYPoints->activeDot;  && (mXYPoints->activeDot != priorDot)
-//    int activeXY = mXYPoints.indexOf(XYController.activeDot);
+ 
     if (mXYPoints[0]->mousing == true)
     {
 //        if(mXYPoints[0]->dotVector.begin() == mXYPoints[0]->activeDot){
@@ -145,15 +138,14 @@ void MultiAvptslAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster*
 //
 //        String xySelection = "frequencyCutoff" + str;\
         
-        
         //if selected dot is equalizvalent to a given index then define visible slider
         
         switch (iSelected) {
+                
             case 1:
                 bandEditors[0]->frequencyCutoff1.Component::setVisible(true);
                 bandEditors[0]->Q1.Component::setVisible(true);
                 bandEditors[0]->Gain1.Component::setVisible(true);
-                
                 
                 bandEditors[0]->frequencyCutoff2.Component::setVisible(false);
                 bandEditors[0]->Q2.Component::setVisible(false);
@@ -300,6 +292,8 @@ void MultiAvptslAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster*
 }
 
 
+
+
 void MultiAvptslAudioProcessorEditor::timerCallback()
 {
     if (processor.checkForNewAnalyserData())
@@ -375,6 +369,8 @@ index(i),
     addAndMakeVisible (frequencyCutoff3);
     addAndMakeVisible (frequencyCutoff4);
     addAndMakeVisible (frequencyCutoff5);
+    
+//    frequencyCutoff1.setTextBoxStyle(Slider::TextB, false, 40, 80);
 
     frequencyCutoff2.setVisible(false);
     frequencyCutoff3.setVisible(false);
@@ -404,6 +400,25 @@ index(i),
     Gain3.setVisible(false);
     Gain4.setVisible(false);
     Gain5.setVisible(false);
+    
+    
+    frequencyCutoff1.setTextBoxIsEditable(true);
+    frequencyCutoff2.setTextBoxIsEditable(true);
+    frequencyCutoff3.setTextBoxIsEditable(true);
+    frequencyCutoff4.setTextBoxIsEditable(true);
+    frequencyCutoff5.setTextBoxIsEditable(true);
+    
+    Q1.setTextBoxIsEditable(true);
+    Q2.setTextBoxIsEditable(true);
+    Q3.setTextBoxIsEditable(true);
+    Q4.setTextBoxIsEditable(true);
+    Q5.setTextBoxIsEditable(true);
+    
+    Gain1.setTextBoxIsEditable(true);
+    Gain2.setTextBoxIsEditable(true);
+    Gain3.setTextBoxIsEditable(true);
+    Gain4.setTextBoxIsEditable(true);
+    Gain5.setTextBoxIsEditable(true);
 
     
 //    String ID = "Freq1";

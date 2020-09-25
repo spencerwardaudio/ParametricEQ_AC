@@ -131,7 +131,6 @@ public:
         const float ry = centreY - radius;
         
         
-        
         g.drawImage(mSliderImage,
                     rx,
                     ry,
@@ -142,7 +141,28 @@ public:
                     mSliderImage.getWidth(),
                     mSliderImage.getWidth());
     }
+    
 
+    void drawLabel (Graphics& g, Label& label) override
+{
+    // g.fillAll (label.findColour (Label::backgroundColourId));
+    g.setColour (Colours::skyblue);
+    
+    g.drawRoundedRectangle (10.f, 4.f, 60.f, 16.f, 3.f, 1.f);
+
+    g.drawFittedText(label.getText(), 5, 0, 70, 25, Justification::centred, 1, 0.5f);
+    
+            g.setColour(label.findColour(Label::outlineColourId));
+        if (!label.isBeingEdited())
+        {
+            auto alpha = label.isEnabled() ? 1.0f : 0.5f;
+            const Font font(getLabelFont(label));
+
+            g.setColour(label.findColour(Label::textColourId).withMultipliedAlpha(alpha));
+            g.setFont(font);
+        }
+
+}
     
 private:
     

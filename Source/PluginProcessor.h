@@ -54,6 +54,8 @@ public:
     
     size_t getNumBands () const;
     String getBandName   (size_t index) const;
+    
+    void setClickedBypass(int index);
 
     static StringArray getFilterTypeNames();
 
@@ -99,13 +101,15 @@ public:
                         FilterType typeToUse,
                         float frequencyToUse,
                     float qualityToUse,
-                        float gainToUse = 1.0f)
+                        float gainToUse = 1.0f,
+                        bool activeStateToUse=true)
                          :
         name (ACParameterID),
         type  (typeToUse),
         Freq (frequencyToUse),
         Q (qualityToUse),
-        Gain    (gainToUse)
+        Gain    (gainToUse),
+        ActiveState (activeStateToUse)
         {}
         
         String name;
@@ -116,6 +120,7 @@ public:
         float Freq = 1200.0f;
         float Q = 0.707f;
         float Gain = 1.0f;
+        bool ActiveState = true;
         
         std::vector<double> magnitudes;
 
@@ -123,7 +128,7 @@ public:
     
     FilterInstance* getBand (size_t index);
 
-    int getFilterIndexFromID (String paramID, size_t index);
+    int getFilterIndexFromID (String paramID);
     
     auto& getTreeState(){return treeState;}
     
@@ -134,6 +139,8 @@ public:
     void updateBand (const size_t index);
     
     void updatePlot();
+    
+    void bypassState();
 
     AudioProcessorValueTreeState treeState;
     
@@ -148,6 +155,8 @@ public:
     dsp::ProcessorChain<filter, filter, filter, filter, filter, Gain> filterChain1;
 
     double sampleRate = 0;
+    
+    int clicked = -1;
     
     ACAnalyzer<float> inputAnalyser;
     

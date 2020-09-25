@@ -80,6 +80,8 @@ AudioProcessorValueTreeState::ParameterLayout  createParameterLayout()
                                                                           AudioProcessorParameter::genericParameter,
                                                                          [](float value, int) {return String (Decibels::gainToDecibels(value), 1) + " dB";},
                                                                          [](String text) {return Decibels::decibelsToGain (text.dropLastCharacters (3).getFloatValue());} );
+    
+            auto activeParameter1 = std::make_unique<AudioParameterBool>("ActiveState1", "ActiveState1", defaults[0].ActiveState, String(), [](float value, int){ return value > 0.5 ? TRANS("F1 Active") : TRANS("F1 Bypassed"); });
 
             
             auto freqParameter2 = std::make_unique<AudioParameterFloat> ("Freq2",
@@ -113,6 +115,9 @@ AudioProcessorValueTreeState::ParameterLayout  createParameterLayout()
                                                                          AudioProcessorParameter::genericParameter,
                                                                         [](float value, int) {return String (Decibels::gainToDecibels(value), 1) + " dB";},
                                                                         [](String text) {return Decibels::decibelsToGain (text.dropLastCharacters (3).getFloatValue());} );
+    
+            auto activeParameter2 = std::make_unique<AudioParameterBool>("ActiveState2", "ActiveState2", defaults[1].ActiveState, String(), [](float value, int){ return value > 0.5 ? TRANS("F2 Active") : TRANS("F2 Bypassed"); });
+    
 
             auto freqParameter3 = std::make_unique<AudioParameterFloat> ("Freq3",
                                                                         "Freq3",
@@ -147,6 +152,8 @@ AudioProcessorValueTreeState::ParameterLayout  createParameterLayout()
                                                                         [](float value, int) {return String (Decibels::gainToDecibels(value), 1) + " dB";},
                                                                         [](String text) {return Decibels::decibelsToGain (text.dropLastCharacters (3).getFloatValue());} );
     
+            auto activeParameter3 = std::make_unique<AudioParameterBool>("ActiveState3", "ActiveState3", defaults[2].ActiveState, String(), [](float value, int){ return value > 0.5 ? TRANS("F3 Active") : TRANS("F3 Bypassed"); });
+    
     
     auto freqParameter4 = std::make_unique<AudioParameterFloat> ("Freq4",
                                                                 "Freq4",
@@ -180,6 +187,8 @@ AudioProcessorValueTreeState::ParameterLayout  createParameterLayout()
                                                                  AudioProcessorParameter::genericParameter,
                                                                 [](float value, int) {return String (Decibels::gainToDecibels(value), 1) + " dB";},
                                                                 [](String text) {return Decibels::decibelsToGain (text.dropLastCharacters (3).getFloatValue());} );
+    
+    auto activeParameter4 = std::make_unique<AudioParameterBool>("ActiveState4", "ActiveState4", defaults[3].ActiveState, String(), [](float value, int){ return value > 0.5 ? TRANS("F4 Active") : TRANS("F4 Bypassed"); });
     
     
     
@@ -216,6 +225,8 @@ AudioProcessorValueTreeState::ParameterLayout  createParameterLayout()
                                                                  [](float value, int) {return String (Decibels::gainToDecibels(value), 1) + " dB";},
                                                                  [](String text) {return Decibels::decibelsToGain (text.dropLastCharacters (3).getFloatValue());} );
     
+    auto activeParameter5 = std::make_unique<AudioParameterBool>("ActiveState5", "ActiveState5", defaults[4].ActiveState, String(), [](float value, int){ return value > 0.5 ? TRANS("F5 Active") : TRANS("F5 Bypassed"); });
+    
     
     
     
@@ -224,7 +235,8 @@ AudioProcessorValueTreeState::ParameterLayout  createParameterLayout()
                                                                     
                                                                     std::move (freqParameter1),
                                                                     std::move (qltyParameter1),
-                                                                    std::move (gainParameter1));
+                                                                    std::move (gainParameter1),
+                                                                    std::move (activeParameter1));
                                                 
        parameters.push_back (std::move (group0));
     
@@ -233,7 +245,8 @@ AudioProcessorValueTreeState::ParameterLayout  createParameterLayout()
                                                                       
                                                                       std::move (freqParameter2),
                                                                     std::move (qltyParameter2),
-                                                                      std::move (gainParameter2));
+                                                                      std::move (gainParameter2),
+                                                                      std::move (activeParameter2));
     
     parameters.push_back (std::move (group1));
     
@@ -242,7 +255,8 @@ AudioProcessorValueTreeState::ParameterLayout  createParameterLayout()
                                                                    
                                                                     std::move (freqParameter3),
                                                                      std::move (qltyParameter3),
-                                                                    std::move (gainParameter3));
+                                                                    std::move (gainParameter3),
+                                                                   std::move (activeParameter3));
     
     parameters.push_back (std::move (group2));
     
@@ -250,7 +264,8 @@ AudioProcessorValueTreeState::ParameterLayout  createParameterLayout()
                                                                    
                                                                     std::move (freqParameter4),
                                                                      std::move (qltyParameter4),
-                                                                    std::move (gainParameter4));
+                                                                    std::move (gainParameter4),
+                                                                   std::move (activeParameter4));
     
     parameters.push_back (std::move (group3));
     
@@ -258,7 +273,8 @@ AudioProcessorValueTreeState::ParameterLayout  createParameterLayout()
                                                                    
                                                                     std::move (freqParameter5),
                                                                      std::move (qltyParameter5),
-                                                                    std::move (gainParameter5));
+                                                                    std::move (gainParameter5),
+                                                                   std::move (activeParameter5));
     
     parameters.push_back (std::move (group4));
 
@@ -298,22 +314,27 @@ MultiAvptslAudioProcessor::MultiAvptslAudioProcessor()
         treeState.addParameterListener ("Freq1", this);
         treeState.addParameterListener ("Q1", this);
         treeState.addParameterListener ("Gain1", this);
+        treeState.addParameterListener ("ActiveState1", this);
     
         treeState.addParameterListener ("Freq2", this);
         treeState.addParameterListener ("Q2", this);
         treeState.addParameterListener ("Gain2", this);
+        treeState.addParameterListener ("ActiveState2", this);
     
         treeState.addParameterListener ("Freq3", this);
         treeState.addParameterListener ("Q3", this);
         treeState.addParameterListener ("Gain3", this);
+        treeState.addParameterListener ("ActiveState3", this);
     
         treeState.addParameterListener ("Freq4", this);
         treeState.addParameterListener ("Q4", this);
         treeState.addParameterListener ("Gain4", this);
+        treeState.addParameterListener ("ActiveState4", this);
     
         treeState.addParameterListener ("Freq5", this);
         treeState.addParameterListener ("Q5", this);
         treeState.addParameterListener ("Gain5", this);
+        treeState.addParameterListener ("ActiveState5", this);  
 
     treeState.addParameterListener ("Output", this);
     
@@ -460,6 +481,9 @@ void MultiAvptslAudioProcessor::parameterChanged (const String& param, float val
             else if (param == "Gain1") {
                 filterBand0->Gain = value;
             }
+            else if (param == "ActiveState1") {
+                filterBand0->ActiveState = value >= 0.5f;
+            }
     
             updateBand (0);
     
@@ -474,6 +498,9 @@ void MultiAvptslAudioProcessor::parameterChanged (const String& param, float val
             else if (param == "Gain2") {
                 filterBand1->Gain = value;
             }
+            else if (param == "ActiveState2") {
+                filterBand0->ActiveState = value >= 0.5f;
+            }
     
             updateBand (1);
 
@@ -486,6 +513,9 @@ void MultiAvptslAudioProcessor::parameterChanged (const String& param, float val
             }
             else if (param == "Gain3") {
                 filterBand2->Gain = value;
+            }
+            else if (param == "ActiveState3") {
+                filterBand0->ActiveState = value >= 0.5f;
             }
 
             updateBand (2);
@@ -501,6 +531,9 @@ void MultiAvptslAudioProcessor::parameterChanged (const String& param, float val
             else if (param == "Gain4") {
                 filterBand3->Gain = value;
             }
+            else if (param == "ActiveState4") {
+                filterBand0->ActiveState = value >= 0.5f;
+            }
 
             updateBand (3);
     
@@ -513,6 +546,9 @@ void MultiAvptslAudioProcessor::parameterChanged (const String& param, float val
             }
             else if (param == "Gain5") {
                 filterBand4->Gain = value;
+            }
+            else if (param == "ActiveState5") {
+                filterBand0->ActiveState = value >= 0.5f;
             }
     
             updateBand (4);
@@ -641,7 +677,7 @@ void MultiAvptslAudioProcessor::updateBand (const size_t index)
             //       }
             
         }
-
+        bypassState();
         updatePlot();
     }
 }
@@ -658,6 +694,23 @@ void MultiAvptslAudioProcessor::updatePlot()
     sendChangeMessage();
 }
 
+void MultiAvptslAudioProcessor::setClickedBypass (int index)
+{
+    clicked = index;
+    bypassState();
+}
+
+void MultiAvptslAudioProcessor::bypassState()
+{
+    if (isPositiveAndBelow (clicked, filterInstances.size())) {
+        filterChain1.setBypassed<0>(!filterInstances[0].ActiveState);
+        filterChain1.setBypassed<1>(!filterInstances[1].ActiveState);
+        filterChain1.setBypassed<2>(!filterInstances[2].ActiveState);
+        filterChain1.setBypassed<3>(!filterInstances[3].ActiveState);
+        filterChain1.setBypassed<4>(!filterInstances[4].ActiveState);
+    }
+}
+
 
 void MultiAvptslAudioProcessor::createFrequencyPlot (Path& p, const std::vector<double>& mags, const Rectangle<int> bounds, float pixelsPerDouble)
 {
@@ -669,8 +722,6 @@ void MultiAvptslAudioProcessor::createFrequencyPlot (Path& p, const std::vector<
         p.lineTo (float (bounds.getX() + i * xFactor),
                   float (mags [i] > 0 ? bounds.getCentreY() - pixelsPerDouble * std::log (mags [i]) / std::log (2) : bounds.getBottom()));
     }
-
-    
 }
 
 void MultiAvptslAudioProcessor::createAnalyserPlot (Path& p, const Rectangle<int> bounds, float minFreq, bool input)

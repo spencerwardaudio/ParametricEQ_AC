@@ -10,13 +10,13 @@
 
 #include "ACComboBox.h"
 
-KAPParameterComboBox::KAPParameterComboBox(AudioProcessorValueTreeState& stateToControl, const String& parameterID)
+ACParameterComboBox::ACParameterComboBox(AudioProcessorValueTreeState& stateToControl, const String& parameterID)
 :   juce::ComboBox(parameterID)
 {
     mAttachment = std::make_unique<AudioProcessorValueTreeState::ComboBoxAttachment>(stateToControl, parameterID, *this);
 }
 
-KAPParameterComboBox::~KAPParameterComboBox()
+ACParameterComboBox::~ACParameterComboBox()
 {
     
 }

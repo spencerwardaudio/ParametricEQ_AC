@@ -7,12 +7,12 @@
 
   ==============================================================================
 */
+#pragma once
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "ACInterfaceDefines.h"
 
-#pragma once
 
 class ACPanelBase
 :   public Component
