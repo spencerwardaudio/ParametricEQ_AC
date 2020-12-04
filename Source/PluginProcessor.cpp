@@ -12,19 +12,19 @@
 #include "PluginEditor.h"
 
 
-std::vector<MultiAvptslAudioProcessor::FilterInstance> createDefaultBands()
+std::vector<ParametricEQ_ACAudioProcessor::FilterInstance> createDefaultBands()
 {
-    std::vector<MultiAvptslAudioProcessor::FilterInstance> defaults;
+    std::vector<ParametricEQ_ACAudioProcessor::FilterInstance> defaults;
     
-    defaults.push_back(MultiAvptslAudioProcessor::FilterInstance ("Freq1", MultiAvptslAudioProcessor::HighPass, 20.0f, 0.707f));
+    defaults.push_back(ParametricEQ_ACAudioProcessor::FilterInstance ("Freq1", ParametricEQ_ACAudioProcessor::HighPass, 20.0f, 0.707f));
     
-    defaults.push_back(MultiAvptslAudioProcessor::FilterInstance ("Freq2", MultiAvptslAudioProcessor::Peak, 500.0f, 0.707f));
+    defaults.push_back(ParametricEQ_ACAudioProcessor::FilterInstance ("Freq2", ParametricEQ_ACAudioProcessor::Peak, 500.0f, 0.707f));
     
-    defaults.push_back(MultiAvptslAudioProcessor::FilterInstance ("Freq3", MultiAvptslAudioProcessor::Peak, 1200.0f, 0.707f));
+    defaults.push_back(ParametricEQ_ACAudioProcessor::FilterInstance ("Freq3", ParametricEQ_ACAudioProcessor::Peak, 1200.0f, 0.707f));
     
-    defaults.push_back(MultiAvptslAudioProcessor::FilterInstance ("Freq4", MultiAvptslAudioProcessor::Peak, 5000.0f, 0.707f));
+    defaults.push_back(ParametricEQ_ACAudioProcessor::FilterInstance ("Freq4", ParametricEQ_ACAudioProcessor::Peak, 5000.0f, 0.707f));
     
-    defaults.push_back(MultiAvptslAudioProcessor::FilterInstance ("Freq5", MultiAvptslAudioProcessor::LowPass, 18000.0f, 0.707f));
+    defaults.push_back(ParametricEQ_ACAudioProcessor::FilterInstance ("Freq5", ParametricEQ_ACAudioProcessor::LowPass, 18000.0f, 0.707f));
     
     return defaults;
 }
@@ -283,7 +283,7 @@ AudioProcessorValueTreeState::ParameterLayout  createParameterLayout()
 }
 
 //==============================================================================
-MultiAvptslAudioProcessor::MultiAvptslAudioProcessor()
+ParametricEQ_ACAudioProcessor::ParametricEQ_ACAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
@@ -344,18 +344,18 @@ MultiAvptslAudioProcessor::MultiAvptslAudioProcessor()
     
 }
 
-MultiAvptslAudioProcessor::~MultiAvptslAudioProcessor()
+ParametricEQ_ACAudioProcessor::~ParametricEQ_ACAudioProcessor()
 {
     inputAnalyser.stopThread (1000);
 }
 
 //==============================================================================
-const String MultiAvptslAudioProcessor::getName() const
+const String ParametricEQ_ACAudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
 
-bool MultiAvptslAudioProcessor::acceptsMidi() const
+bool ParametricEQ_ACAudioProcessor::acceptsMidi() const
 {
    #if JucePlugin_WantsMidiInput
     return true;
@@ -364,7 +364,7 @@ bool MultiAvptslAudioProcessor::acceptsMidi() const
    #endif
 }
 
-bool MultiAvptslAudioProcessor::producesMidi() const
+bool ParametricEQ_ACAudioProcessor::producesMidi() const
 {
    #if JucePlugin_ProducesMidiOutput
     return true;
@@ -373,7 +373,7 @@ bool MultiAvptslAudioProcessor::producesMidi() const
    #endif
 }
 
-bool MultiAvptslAudioProcessor::isMidiEffect() const
+bool ParametricEQ_ACAudioProcessor::isMidiEffect() const
 {
    #if JucePlugin_IsMidiEffect
     return true;
@@ -382,37 +382,37 @@ bool MultiAvptslAudioProcessor::isMidiEffect() const
    #endif
 }
 
-double MultiAvptslAudioProcessor::getTailLengthSeconds() const
+double ParametricEQ_ACAudioProcessor::getTailLengthSeconds() const
 {
     return 0.0;
 }
 
-int MultiAvptslAudioProcessor::getNumPrograms()
+int ParametricEQ_ACAudioProcessor::getNumPrograms()
 {
     return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-int MultiAvptslAudioProcessor::getCurrentProgram()
+int ParametricEQ_ACAudioProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void MultiAvptslAudioProcessor::setCurrentProgram (int index)
+void ParametricEQ_ACAudioProcessor::setCurrentProgram (int index)
 {
 }
 
-const String MultiAvptslAudioProcessor::getProgramName (int index)
+const String ParametricEQ_ACAudioProcessor::getProgramName (int index)
 {
     return {};
 }
 
-void MultiAvptslAudioProcessor::changeProgramName (int index, const String& newName)
+void ParametricEQ_ACAudioProcessor::changeProgramName (int index, const String& newName)
 {
 }
 
 //==============================================================================
-void MultiAvptslAudioProcessor::prepareToPlay (double newSampleRate, int samplesPerBlock)
+void ParametricEQ_ACAudioProcessor::prepareToPlay (double newSampleRate, int samplesPerBlock)
 {
         sampleRate = newSampleRate;
 
@@ -434,14 +434,14 @@ void MultiAvptslAudioProcessor::prepareToPlay (double newSampleRate, int samples
     inputAnalyser.setupAnalyser  (int (sampleRate), float (sampleRate));
 }
 
-void MultiAvptslAudioProcessor::releaseResources()
+void ParametricEQ_ACAudioProcessor::releaseResources()
 {
     inputAnalyser.stopThread (1000);
 }
 
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool MultiAvptslAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool ParametricEQ_ACAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
   #if JucePlugin_IsMidiEffect
     ignoreUnused (layouts);
@@ -464,7 +464,7 @@ bool MultiAvptslAudioProcessor::isBusesLayoutSupported (const BusesLayout& layou
 }
 #endif
 
-void MultiAvptslAudioProcessor::parameterChanged (const String& param, float value)
+void ParametricEQ_ACAudioProcessor::parameterChanged (const String& param, float value)
 {
 
         if (param == "Output") {
@@ -557,12 +557,12 @@ void MultiAvptslAudioProcessor::parameterChanged (const String& param, float val
 
 }
 
-size_t MultiAvptslAudioProcessor::getNumBands () const
+size_t ParametricEQ_ACAudioProcessor::getNumBands () const
 {
     return filterInstances.size();
 }
 
-String MultiAvptslAudioProcessor::getBandName   (size_t index) const
+String ParametricEQ_ACAudioProcessor::getBandName   (size_t index) const
 {
     if (isPositiveAndBelow (index, filterInstances.size()))
         return filterInstances [size_t (index)].name;
@@ -570,7 +570,7 @@ String MultiAvptslAudioProcessor::getBandName   (size_t index) const
 }
 
 
-MultiAvptslAudioProcessor::FilterInstance* MultiAvptslAudioProcessor::getBand (size_t index)
+ParametricEQ_ACAudioProcessor::FilterInstance* ParametricEQ_ACAudioProcessor::getBand (size_t index)
 {
     if (isPositiveAndBelow (index, filterInstances.size()))
         return &filterInstances [index];
@@ -578,7 +578,7 @@ MultiAvptslAudioProcessor::FilterInstance* MultiAvptslAudioProcessor::getBand (s
 }
 
 
-StringArray MultiAvptslAudioProcessor::getFilterTypeNames()
+StringArray ParametricEQ_ACAudioProcessor::getFilterTypeNames()
 {
     return {
         TRANS ("Low Pass"),
@@ -587,7 +587,7 @@ StringArray MultiAvptslAudioProcessor::getFilterTypeNames()
     };
 }
 
-void MultiAvptslAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
+void ParametricEQ_ACAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     
     ScopedNoDenormals noDenormals;
@@ -607,28 +607,28 @@ void MultiAvptslAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBu
     updatePlot();
 }
 
-AudioProcessorValueTreeState& MultiAvptslAudioProcessor::getPluginState()
+AudioProcessorValueTreeState& ParametricEQ_ACAudioProcessor::getPluginState()
 {
     return treeState;
 }
 
-const std::vector<double>& MultiAvptslAudioProcessor::getMagnitudes ()
+const std::vector<double>& ParametricEQ_ACAudioProcessor::getMagnitudes ()
 {
     return magnitudes;
 }
 
-bool MultiAvptslAudioProcessor::hasEditor() const
+bool ParametricEQ_ACAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
 }
 
-AudioProcessorEditor* MultiAvptslAudioProcessor::createEditor()
+AudioProcessorEditor* ParametricEQ_ACAudioProcessor::createEditor()
 {
-    return new MultiAvptslAudioProcessorEditor (*this);
+    return new ParametricEQ_ACAudioProcessorEditor (*this);
 }
 
 
-void MultiAvptslAudioProcessor::updateBand (const size_t index)
+void ParametricEQ_ACAudioProcessor::updateBand (const size_t index)
 {
     if (sampleRate > 0) {
         dsp::IIR::Coefficients<float>::Ptr newCoefficients;
@@ -682,7 +682,7 @@ void MultiAvptslAudioProcessor::updateBand (const size_t index)
     }
 }
 
-void MultiAvptslAudioProcessor::updatePlot()
+void ParametricEQ_ACAudioProcessor::updatePlot()
 {
     auto Gain1 = filterChain1.get<5>().getGainLinear();
     std::fill (magnitudes.begin(), magnitudes.end(), Gain1);
@@ -694,13 +694,13 @@ void MultiAvptslAudioProcessor::updatePlot()
     sendChangeMessage();
 }
 
-void MultiAvptslAudioProcessor::setClickedBypass (int index)
+void ParametricEQ_ACAudioProcessor::setClickedBypass (int index)
 {
     clicked = index;
     bypassState();
 }
 
-void MultiAvptslAudioProcessor::bypassState()
+void ParametricEQ_ACAudioProcessor::bypassState()
 {
     if (isPositiveAndBelow (clicked, filterInstances.size())) {
         filterChain1.setBypassed<0>(!filterInstances[0].ActiveState);
@@ -712,7 +712,7 @@ void MultiAvptslAudioProcessor::bypassState()
 }
 
 
-void MultiAvptslAudioProcessor::createFrequencyPlot (Path& p, const std::vector<double>& mags, const Rectangle<int> bounds, float pixelsPerDouble)
+void ParametricEQ_ACAudioProcessor::createFrequencyPlot (Path& p, const std::vector<double>& mags, const Rectangle<int> bounds, float pixelsPerDouble)
 {
 
     p.startNewSubPath (bounds.getX(), mags [0] > 0 ? float (bounds.getCentreY() - pixelsPerDouble * std::log (mags [0]) / std::log (2)) : bounds.getBottom());
@@ -724,23 +724,23 @@ void MultiAvptslAudioProcessor::createFrequencyPlot (Path& p, const std::vector<
     }
 }
 
-void MultiAvptslAudioProcessor::createAnalyserPlot (Path& p, const Rectangle<int> bounds, float minFreq, bool input)
+void ParametricEQ_ACAudioProcessor::createAnalyserPlot (Path& p, const Rectangle<int> bounds, float minFreq, bool input)
 {
     if (input)
         inputAnalyser.createPath (p, bounds.toFloat(), minFreq);
 }
 
-bool MultiAvptslAudioProcessor::checkForNewAnalyserData()
+bool ParametricEQ_ACAudioProcessor::checkForNewAnalyserData()
 {
     return inputAnalyser.checkForNewData();
 }
 
-void MultiAvptslAudioProcessor::getStateInformation (MemoryBlock& destData)
+void ParametricEQ_ACAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
 
 }
 
-void MultiAvptslAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void ParametricEQ_ACAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
 
 }
@@ -749,5 +749,5 @@ void MultiAvptslAudioProcessor::setStateInformation (const void* data, int sizeI
 // This creates new instances of the plugin..
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new MultiAvptslAudioProcessor();
+    return new ParametricEQ_ACAudioProcessor();
 }

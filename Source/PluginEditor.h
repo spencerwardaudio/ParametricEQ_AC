@@ -27,11 +27,11 @@
 //==============================================================================
 /**
 */
-class MultiAvptslAudioProcessorEditor  : public AudioProcessorEditor, /*public XYController::Listener, */ public ChangeListener, public Timer
+class ParametricEQ_ACAudioProcessorEditor  : public AudioProcessorEditor, /*public XYController::Listener, */ public ChangeListener, public Timer
 {
 public:
-    MultiAvptslAudioProcessorEditor (MultiAvptslAudioProcessor&);
-    ~MultiAvptslAudioProcessorEditor();
+    ParametricEQ_ACAudioProcessorEditor (ParametricEQ_ACAudioProcessor&);
+    ~ParametricEQ_ACAudioProcessorEditor();
 
     //==============================================================================
     void paint (Graphics&) override;
@@ -61,7 +61,7 @@ public:
     class BandEditor : public Component
     {
     public:
-        BandEditor(size_t i, MultiAvptslAudioProcessor& processor);
+        BandEditor(size_t i, ParametricEQ_ACAudioProcessor& processor);
 
         void resized () override;
 
@@ -81,7 +81,7 @@ public:
             JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BandEditor)
 
             size_t index;
-            MultiAvptslAudioProcessor& processor;
+            ParametricEQ_ACAudioProcessor& processor;
 
 
             OwnedArray<AudioProcessorValueTreeState::SliderAttachment> attachments;
@@ -104,7 +104,7 @@ private:
     
     OwnedArray<XYController> mXYPoints;
 
-    MultiAvptslAudioProcessor& processor;
+    ParametricEQ_ACAudioProcessor& processor;
     
     Path    analyzerPath;
 
@@ -117,5 +117,5 @@ private:
     std::unique_ptr<ACBottomRightPanel> mBottomRightPanel;
     std::unique_ptr<ACLookAndFeel> mLookAndFeel;
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MultiAvptslAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ParametricEQ_ACAudioProcessorEditor)
 };

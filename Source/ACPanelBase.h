@@ -19,7 +19,7 @@ class ACPanelBase
 {
 public:
     
-    ACPanelBase(MultiAvptslAudioProcessor* inProcessor);
+    ACPanelBase(ParametricEQ_ACAudioProcessor* inProcessor);
     ~ACPanelBase();
     
     void mouseEnter (const MouseEvent& event) override;
@@ -30,6 +30,6 @@ public:
     
 protected:
     
-    MultiAvptslAudioProcessor* mProcessor;
+    ParametricEQ_ACAudioProcessor* mProcessor;
     
 };

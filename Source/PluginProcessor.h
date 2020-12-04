@@ -21,7 +21,7 @@
 //==============================================================================
 /**
 */
-class MultiAvptslAudioProcessor  : public AudioProcessor, public AudioProcessorValueTreeState::Listener, public ChangeBroadcaster
+class ParametricEQ_ACAudioProcessor  : public AudioProcessor, public AudioProcessorValueTreeState::Listener, public ChangeBroadcaster
 {
 public:
     
@@ -34,8 +34,8 @@ public:
     };
 
     //==============================================================================
-    MultiAvptslAudioProcessor();
-    ~MultiAvptslAudioProcessor();
+    ParametricEQ_ACAudioProcessor();
+    ~ParametricEQ_ACAudioProcessor();
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -134,7 +134,7 @@ public:
     
     private:
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MultiAvptslAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ParametricEQ_ACAudioProcessor)
     
     void updateBand (const size_t index);
     

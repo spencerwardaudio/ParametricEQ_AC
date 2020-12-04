@@ -21,7 +21,7 @@ class ACMainPanel
     
 public:
     
-    ACMainPanel(MultiAvptslAudioProcessor* inProcessor);
+    ACMainPanel(ParametricEQ_ACAudioProcessor* inProcessor);
     ~ACMainPanel();
     
 private:

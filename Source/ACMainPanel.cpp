@@ -11,7 +11,7 @@
 #include "ACMainPanel.h"
 #include "ACParameters.h"
 
-ACMainPanel::ACMainPanel(MultiAvptslAudioProcessor* inProcessor)
+ACMainPanel::ACMainPanel(ParametricEQ_ACAudioProcessor* inProcessor)
 :   ACPanelBase(inProcessor)
 {
     setSize(MAIN_PANEL_WIDTH, MAIN_PANEL_HEIGHT);

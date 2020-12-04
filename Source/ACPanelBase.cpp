@@ -11,7 +11,7 @@
 #include "ACPanelBase.h"
 #include "ACInterfaceDefines.h"
 
-ACPanelBase::ACPanelBase(MultiAvptslAudioProcessor* inProcessor)
+ACPanelBase::ACPanelBase(ParametricEQ_ACAudioProcessor* inProcessor)
 :   mProcessor(inProcessor)
 {
     

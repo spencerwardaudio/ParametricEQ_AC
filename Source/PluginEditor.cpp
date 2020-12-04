@@ -14,7 +14,7 @@
 #include "ACParameters.h"
 
 //==============================================================================
-MultiAvptslAudioProcessorEditor::MultiAvptslAudioProcessorEditor (MultiAvptslAudioProcessor& p)
+ParametricEQ_ACAudioProcessorEditor::ParametricEQ_ACAudioProcessorEditor (ParametricEQ_ACAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
 
@@ -52,14 +52,14 @@ MultiAvptslAudioProcessorEditor::MultiAvptslAudioProcessorEditor (MultiAvptslAud
 
 }
 
-MultiAvptslAudioProcessorEditor::~MultiAvptslAudioProcessorEditor()
+ParametricEQ_ACAudioProcessorEditor::~ParametricEQ_ACAudioProcessorEditor()
 {
     processor.removeChangeListener(this);
     
 }
 
 //==============================================================================
-void MultiAvptslAudioProcessorEditor::paint (Graphics& g)
+void ParametricEQ_ACAudioProcessorEditor::paint (Graphics& g)
 {
 
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
@@ -106,7 +106,7 @@ void MultiAvptslAudioProcessorEditor::paint (Graphics& g)
 
 }
 
-void MultiAvptslAudioProcessorEditor::resized()
+void ParametricEQ_ACAudioProcessorEditor::resized()
 {
     
     plotFrame = getLocalBounds().reduced (3, 3);
@@ -121,7 +121,7 @@ void MultiAvptslAudioProcessorEditor::resized()
     updateFrequencyResponses();
 }
 
-void MultiAvptslAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* sender)
+void ParametricEQ_ACAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* sender)
 {
             ignoreUnused (sender);
             updateFrequencyResponses();
@@ -294,13 +294,13 @@ void MultiAvptslAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster*
 
 
 
-void MultiAvptslAudioProcessorEditor::timerCallback()
+void ParametricEQ_ACAudioProcessorEditor::timerCallback()
 {
     if (processor.checkForNewAnalyserData())
         repaint (plotFrame);
 }
 
-void MultiAvptslAudioProcessorEditor::updateFrequencyResponses ()
+void ParametricEQ_ACAudioProcessorEditor::updateFrequencyResponses ()
 {
     auto pixelsPerDouble = 2.0f * plotFrame.getHeight() / Decibels::decibelsToGain (24.0f);
 
@@ -320,17 +320,17 @@ void MultiAvptslAudioProcessorEditor::updateFrequencyResponses ()
     processor.createFrequencyPlot (frequencyResponse, processor.getMagnitudes(), plotFrame, pixelsPerDouble);
 }
 
-float MultiAvptslAudioProcessorEditor::getPositionForFrequency (float freq)
+float ParametricEQ_ACAudioProcessorEditor::getPositionForFrequency (float freq)
 {
     return (std::log (freq / 20.0f) / std::log (2.0f)) / 10.0f;
 }
 
-float MultiAvptslAudioProcessorEditor::getFrequencyForPosition (float pos)
+float ParametricEQ_ACAudioProcessorEditor::getFrequencyForPosition (float pos)
 {
     return 20.0f * std::pow (2.0f, pos * 10.0f);
 }
 
-MultiAvptslAudioProcessorEditor::BandEditor::BandEditor (size_t i, MultiAvptslAudioProcessor& p)
+ParametricEQ_ACAudioProcessorEditor::BandEditor::BandEditor (size_t i, ParametricEQ_ACAudioProcessor& p)
   :
 frequencyCutoff1 (Slider::RotaryHorizontalVerticalDrag, Slider::TextBoxBelow),
 frequencyCutoff2 (Slider::RotaryHorizontalVerticalDrag, Slider::TextBoxBelow),
@@ -452,7 +452,7 @@ index(i),
 
 }
 
-void MultiAvptslAudioProcessorEditor::BandEditor::resized ()
+void ParametricEQ_ACAudioProcessorEditor::BandEditor::resized ()
 {
 
     setSize(500, 200);
@@ -490,13 +490,13 @@ void MultiAvptslAudioProcessorEditor::BandEditor::resized ()
     
 }
 
-void MultiAvptslAudioProcessorEditor::BandEditor::setFrequency (float freq)
+void ParametricEQ_ACAudioProcessorEditor::BandEditor::setFrequency (float freq)
 {
     frequencyCutoff1.setValue (freq, sendNotification);
     
 }
 
-void MultiAvptslAudioProcessorEditor::BandEditor::setGain (float gainToUse)
+void ParametricEQ_ACAudioProcessorEditor::BandEditor::setGain (float gainToUse)
 {
     Gain1.setValue (gainToUse, sendNotification);
 }
