@@ -51,7 +51,6 @@ public:
     
     AudioProcessorValueTreeState& getPluginState();
     
-    
     size_t getNumBands () const;
     String getBandName   (size_t index) const;
     

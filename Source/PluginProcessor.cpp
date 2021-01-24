@@ -16,16 +16,16 @@ std::vector<ParametricEQ_ACAudioProcessor::FilterInstance> createDefaultBands()
 {
     std::vector<ParametricEQ_ACAudioProcessor::FilterInstance> defaults;
     
-    defaults.push_back(ParametricEQ_ACAudioProcessor::FilterInstance ("Freq1", ParametricEQ_ACAudioProcessor::HighPass, 20.0f, 0.707f));
+    for(int i = 0; i < 5; ++i)
+    {
+        int k = 0;
+        
+        if (i == 0) { k = 0; }
+        else if (i == 4) { k = 2; }
+        else { k = 1; }
     
-    defaults.push_back(ParametricEQ_ACAudioProcessor::FilterInstance ("Freq2", ParametricEQ_ACAudioProcessor::Peak, 500.0f, 0.707f));
-    
-    defaults.push_back(ParametricEQ_ACAudioProcessor::FilterInstance ("Freq3", ParametricEQ_ACAudioProcessor::Peak, 1200.0f, 0.707f));
-    
-    defaults.push_back(ParametricEQ_ACAudioProcessor::FilterInstance ("Freq4", ParametricEQ_ACAudioProcessor::Peak, 5000.0f, 0.707f));
-    
-    defaults.push_back(ParametricEQ_ACAudioProcessor::FilterInstance ("Freq5", ParametricEQ_ACAudioProcessor::LowPass, 18000.0f, 0.707f));
-    
+        defaults.push_back(ParametricEQ_ACAudioProcessor::FilterInstance ("Freq" + String(i),  static_cast<ParametricEQ_ACAudioProcessor::FilterType>(static_cast<int>(ParametricEQ_ACAudioProcessor::HighPass) + k), (float)jmap(i, 0, 4, 20, 18000), 0.707f));
+    }
     return defaults;
 }
 
@@ -40,17 +40,20 @@ AudioProcessorValueTreeState::ParameterLayout  createParameterLayout()
     {
         auto param = std::make_unique<AudioParameterFloat>("Output", TRANS ("Output"), NormalisableRange<float> (0.0f, 2.0f, 0.01f), 0.8f, "Output level");
 
-        
-                auto group = std::make_unique<AudioProcessorParameterGroup> ("global", TRANS ("Globals"), "|", std::move (param));
+        auto group = std::make_unique<AudioProcessorParameterGroup> ("global", TRANS ("Globals"), "|", std::move (param));
         
         parameters.push_back (std::move (group));
     }
+    
+    
+    std::vector<std::unique_ptr<AudioProcessorParameterGroup>> group;
 
-
-             auto freqParameter1 = std::make_unique<AudioParameterFloat> ("Freq1",
-                                                                         "Freq1",
+    for(int i = 0; i < 5; ++i)
+    {
+             auto freqParameter = std::make_unique<AudioParameterFloat> ("Freq" + String(i),
+                                                                         "Freq" + String(i),
                                                                          NormalisableRange<float> {20.0f, 20000.0f, 1.0f, std::log (0.5f) / std::log (980.0f / 19980.0f)},
-                                                                         defaults [0].Freq,
+                                                                         defaults [i].Freq,
                                                                          String(),
     
                                                                             AudioProcessorParameter::genericParameter,
@@ -62,221 +65,37 @@ AudioProcessorValueTreeState::ParameterLayout  createParameterLayout()
                                                                                 text.dropLastCharacters (3).getFloatValue(); });
 
 
-             auto qltyParameter1 = std::make_unique<AudioParameterFloat> ("Q1",
-                                                                         "Q1",
+             auto qltyParameter = std::make_unique<AudioParameterFloat> ("Q" + String(i),
+                                                                         "Q" + String(i),
                                                                          NormalisableRange<float> {0.1f, 10.0f, 1.0f, std::log (0.5f) / std::log (0.9f / 9.9f)},
-                                                                         defaults [0].Q,
+                                                                         defaults [i].Q,
                                                                          String(),
                                                                          AudioProcessorParameter::genericParameter,
                                                                          [](float value, int) { return String (value, 1) + " Q"; },
                                                                          [](const String& text) { return text.getFloatValue(); });
 
              
-             auto gainParameter1 = std::make_unique<AudioParameterFloat> ("Gain1",
-                                                                           "Gain1",
+             auto gainParameter = std::make_unique<AudioParameterFloat> ("Gain" + String(i),
+                                                                           "Gain" + String(i),
                                                                            NormalisableRange<float> {1.0f / maxGain, maxGain, 0.001f,
                                                                                std::log (0.5f) / std::log ((1.0f - (1.0f / maxGain)) / (maxGain - (1.0f / maxGain)))},
-                                                                         defaults [0].Gain, String(),
+                                                                         defaults [i].Gain, String(),
                                                                           AudioProcessorParameter::genericParameter,
                                                                          [](float value, int) {return String (Decibels::gainToDecibels(value), 1) + " dB";},
                                                                          [](String text) {return Decibels::decibelsToGain (text.dropLastCharacters (3).getFloatValue());} );
     
-            auto activeParameter1 = std::make_unique<AudioParameterBool>("ActiveState1", "ActiveState1", defaults[0].ActiveState, String(), [](float value, int){ return value > 0.5 ? TRANS("F1 Active") : TRANS("F1 Bypassed"); });
-
-            
-            auto freqParameter2 = std::make_unique<AudioParameterFloat> ("Freq2",
-                                                                        "Freq2",
-                                                                        NormalisableRange<float> {20.0f, 20000.0f, 1.0f, std::log (0.5f) / std::log (980.0f / 19980.0f)},
-                                                                        defaults [1].Freq,
-                                                                        String(),
-                                                                         AudioProcessorParameter::genericParameter,
-                                                                         [](float value, int) { return (value < 1000) ?
-                                                                             String (value, 0) + " Hz" :
-                                                                             String (value / 1000.0, 2) + " kHz"; },
-                                                                         [](String text) { return text.endsWith(" kHz") ?
-                                                                             text.dropLastCharacters (4).getFloatValue() * 1000.0 :
-                                                                             text.dropLastCharacters (3).getFloatValue(); });
-
-            auto qltyParameter2 = std::make_unique<AudioParameterFloat> ("Q2",
-                                                                        "Q2",
-                                                                        NormalisableRange<float> {0.1f, 10.0f, 1.0f, std::log (0.5f) / std::log (0.9f / 9.9f)},
-                                                                        defaults [1].Q,
-                                                                        String(),
-                                                                        AudioProcessorParameter::genericParameter,
-                                                                        [](float value, int) { return String (value, 1) + " Q"; },
-                                                                        [](const String& text) { return text.getFloatValue(); });
-
-            
-            auto gainParameter2 = std::make_unique<AudioParameterFloat> ("Gain2",
-                                                                          "Gain2",
-                                                                          NormalisableRange<float> {1.0f / maxGain, maxGain, 0.001f,
-                                                                              std::log (0.5f) / std::log ((1.0f - (1.0f / maxGain)) / (maxGain - (1.0f / maxGain)))},
-                                                                        defaults [1].Gain, String(),
-                                                                         AudioProcessorParameter::genericParameter,
-                                                                        [](float value, int) {return String (Decibels::gainToDecibels(value), 1) + " dB";},
-                                                                        [](String text) {return Decibels::decibelsToGain (text.dropLastCharacters (3).getFloatValue());} );
-    
-            auto activeParameter2 = std::make_unique<AudioParameterBool>("ActiveState2", "ActiveState2", defaults[1].ActiveState, String(), [](float value, int){ return value > 0.5 ? TRANS("F2 Active") : TRANS("F2 Bypassed"); });
-    
-
-            auto freqParameter3 = std::make_unique<AudioParameterFloat> ("Freq3",
-                                                                        "Freq3",
-                                                                        NormalisableRange<float> {20.0f, 20000.0f, 1.0f, std::log (0.5f) / std::log (980.0f / 19980.0f)},
-                                                                        defaults [2].Freq,
-                                                                        String(),
-                                                                         AudioProcessorParameter::genericParameter,
-                                                                         [](float value, int) { return (value < 1000) ?
-                                                                             String (value, 0) + " Hz" :
-                                                                             String (value / 1000.0, 2) + " kHz"; },
-                                                                         [](String text) { return text.endsWith(" kHz") ?
-                                                                             text.dropLastCharacters (4).getFloatValue() * 1000.0 :
-                                                                             text.dropLastCharacters (3).getFloatValue(); });
+            auto activeParameter = std::make_unique<AudioParameterBool>("ActiveState" + String(i), "ActiveState" + String(i), defaults[i].ActiveState, String(), [](float value, int){ return value > 0.5 ? TRANS("F Active") : TRANS("F  Bypassed"); });
 
 
-            auto qltyParameter3 = std::make_unique<AudioParameterFloat> ("Q3",
-                                                                        "Q3",
-                                                                        NormalisableRange<float> {0.1f, 10.0f, 1.0f, std::log (0.5f) / std::log (0.9f / 9.9f)},
-                                                                        defaults [2].Q,
-                                                                        String(),
-                                                                        AudioProcessorParameter::genericParameter,
-                                                                        [](float value, int) { return String (value, 1) + " Q"; },
-                                                                        [](const String& text) { return text.getFloatValue(); });
-
-            
-            auto gainParameter3 = std::make_unique<AudioParameterFloat> ("Gain3",
-                                                                          "Gain3",
-                                                                          NormalisableRange<float> {1.0f / maxGain, maxGain, 0.001f,
-                                                                              std::log (0.5f) / std::log ((1.0f - (1.0f / maxGain)) / (maxGain - (1.0f / maxGain)))},
-                                                                        defaults [2].Gain, String(),
-                                                                         AudioProcessorParameter::genericParameter,
-                                                                        [](float value, int) {return String (Decibels::gainToDecibels(value), 1) + " dB";},
-                                                                        [](String text) {return Decibels::decibelsToGain (text.dropLastCharacters (3).getFloatValue());} );
-    
-            auto activeParameter3 = std::make_unique<AudioParameterBool>("ActiveState3", "ActiveState3", defaults[2].ActiveState, String(), [](float value, int){ return value > 0.5 ? TRANS("F3 Active") : TRANS("F3 Bypassed"); });
-    
-    
-    auto freqParameter4 = std::make_unique<AudioParameterFloat> ("Freq4",
-                                                                "Freq4",
-                                                                NormalisableRange<float> {20.0f, 20000.0f, 1.0f, std::log (0.5f) / std::log (980.0f / 19980.0f)},
-                                                                defaults [3].Freq,
-                                                                String(),
-                                                                 AudioProcessorParameter::genericParameter,
-                                                                 [](float value, int) { return (value < 1000) ?
-                                                                     String (value, 0) + " Hz" :
-                                                                     String (value / 1000.0, 2) + " kHz"; },
-                                                                 [](String text) { return text.endsWith(" kHz") ?
-                                                                     text.dropLastCharacters (4).getFloatValue() * 1000.0 :
-                                                                     text.dropLastCharacters (3).getFloatValue(); });
-
-
-    auto qltyParameter4 = std::make_unique<AudioParameterFloat> ("Q4",
-                                                                "Q4",
-                                                                NormalisableRange<float> {0.1f, 10.0f, 1.0f, std::log (0.5f) / std::log (0.9f / 9.9f)},
-                                                                defaults [3].Q,
-                                                                String(),
-                                                                AudioProcessorParameter::genericParameter,
-                                                                [](float value, int) { return String (value, 1) + " Q"; },
-                                                                [](const String& text) { return text.getFloatValue(); });
-
-    
-    auto gainParameter4 = std::make_unique<AudioParameterFloat> ("Gain4",
-                                                                  "Gain4",
-                                                                  NormalisableRange<float> {1.0f / maxGain, maxGain, 0.001f,
-                                                                      std::log (0.5f) / std::log ((1.0f - (1.0f / maxGain)) / (maxGain - (1.0f / maxGain)))},
-                                                                defaults [3].Gain, String(),
-                                                                 AudioProcessorParameter::genericParameter,
-                                                                [](float value, int) {return String (Decibels::gainToDecibels(value), 1) + " dB";},
-                                                                [](String text) {return Decibels::decibelsToGain (text.dropLastCharacters (3).getFloatValue());} );
-    
-    auto activeParameter4 = std::make_unique<AudioParameterBool>("ActiveState4", "ActiveState4", defaults[3].ActiveState, String(), [](float value, int){ return value > 0.5 ? TRANS("F4 Active") : TRANS("F4 Bypassed"); });
-    
-    
-    
-     auto freqParameter5 = std::make_unique<AudioParameterFloat> ("Freq5",
-                                                                 "Freq5",
-                                                                 NormalisableRange<float> {20.0f, 20000.0f, 1.0f, std::log (0.5f) / std::log (980.0f / 19980.0f)},
-                                                                 defaults [4].Freq,
-                                                                 String(),
-                                                                  AudioProcessorParameter::genericParameter,
-                                                                  [](float value, int) { return (value < 1000) ?
-                                                                      String (value, 0) + " Hz" :
-                                                                      String (value / 1000.0, 2) + " kHz"; },
-                                                                  [](String text) { return text.endsWith(" kHz") ?
-                                                                      text.dropLastCharacters (4).getFloatValue() * 1000.0 :
-                                                                      text.dropLastCharacters (3).getFloatValue(); });
-
-
-     auto qltyParameter5 = std::make_unique<AudioParameterFloat> ("Q5",
-                                                                 "Q5",
-                                                                 NormalisableRange<float> {0.1f, 10.0f, 1.0f, std::log (0.5f) / std::log (0.9f / 9.9f)},
-                                                                 defaults [4].Q,
-                                                                 String(),
-                                                                 AudioProcessorParameter::genericParameter,
-                                                                 [](float value, int) { return String (value, 1) + " Q"; },
-                                                                 [](const String& text) { return text.getFloatValue(); });
-
-     
-     auto gainParameter5 = std::make_unique<AudioParameterFloat> ("Gain5",
-                                                                   "Gain5",
-                                                                   NormalisableRange<float> {1.0f / maxGain, maxGain, 0.001f,
-                                                                       std::log (0.5f) / std::log ((1.0f - (1.0f / maxGain)) / (maxGain - (1.0f / maxGain)))},
-                                                                 defaults [4].Gain, String(),
-                                                                  AudioProcessorParameter::genericParameter,
-                                                                 [](float value, int) {return String (Decibels::gainToDecibels(value), 1) + " dB";},
-                                                                 [](String text) {return Decibels::decibelsToGain (text.dropLastCharacters (3).getFloatValue());} );
-    
-    auto activeParameter5 = std::make_unique<AudioParameterBool>("ActiveState5", "ActiveState5", defaults[4].ActiveState, String(), [](float value, int){ return value > 0.5 ? TRANS("F5 Active") : TRANS("F5 Bypassed"); });
-    
-    
-    
-    
-
-      auto group0 = std::make_unique<AudioProcessorParameterGroup> ("band" + String (0), defaults [0].name, "|",
-                                                                    
-                                                                    std::move (freqParameter1),
-                                                                    std::move (qltyParameter1),
-                                                                    std::move (gainParameter1),
-                                                                    std::move (activeParameter1));
-                                                
-       parameters.push_back (std::move (group0));
-    
-    
-        auto group1 = std::make_unique<AudioProcessorParameterGroup> ("band" + String (1), defaults [1].name, "|",
-                                                                      
-                                                                      std::move (freqParameter2),
-                                                                    std::move (qltyParameter2),
-                                                                      std::move (gainParameter2),
-                                                                      std::move (activeParameter2));
-    
-    parameters.push_back (std::move (group1));
-    
-    
-     auto group2 = std::make_unique<AudioProcessorParameterGroup> ("band" + String (2), defaults [2].name, "|",
-                                                                   
-                                                                    std::move (freqParameter3),
-                                                                     std::move (qltyParameter3),
-                                                                    std::move (gainParameter3),
-                                                                   std::move (activeParameter3));
-    
-    parameters.push_back (std::move (group2));
-    
-     auto group3 = std::make_unique<AudioProcessorParameterGroup> ("band" + String (3), defaults [3].name, "|",
-                                                                   
-                                                                    std::move (freqParameter4),
-                                                                     std::move (qltyParameter4),
-                                                                    std::move (gainParameter4),
-                                                                   std::move (activeParameter4));
-    
-    parameters.push_back (std::move (group3));
-    
-     auto group4 = std::make_unique<AudioProcessorParameterGroup> ("band" + String (4), defaults [4].name, "|",
-                                                                   
-                                                                    std::move (freqParameter5),
-                                                                     std::move (qltyParameter5),
-                                                                    std::move (gainParameter5),
-                                                                   std::move (activeParameter5));
-    
-    parameters.push_back (std::move (group4));
+            auto groupItem = std::make_unique<AudioProcessorParameterGroup> ("band" + String(i), defaults [i].name, "|",
+                                                                        
+                                                                        std::move (freqParameter),
+                                                                        std::move (qltyParameter),
+                                                                        std::move (gainParameter),
+                                                                        std::move (activeParameter));
+                                                    
+            parameters.push_back (std::move (groupItem));
+        }
 
     return { parameters.begin(), parameters.end() };
     
@@ -311,30 +130,13 @@ ParametricEQ_ACAudioProcessor::ParametricEQ_ACAudioProcessor()
         filterInstances [i].magnitudes.resize(frequencies.size(), 1.0);
     }
         
-        treeState.addParameterListener ("Freq1", this);
-        treeState.addParameterListener ("Q1", this);
-        treeState.addParameterListener ("Gain1", this);
-        treeState.addParameterListener ("ActiveState1", this);
-    
-        treeState.addParameterListener ("Freq2", this);
-        treeState.addParameterListener ("Q2", this);
-        treeState.addParameterListener ("Gain2", this);
-        treeState.addParameterListener ("ActiveState2", this);
-    
-        treeState.addParameterListener ("Freq3", this);
-        treeState.addParameterListener ("Q3", this);
-        treeState.addParameterListener ("Gain3", this);
-        treeState.addParameterListener ("ActiveState3", this);
-    
-        treeState.addParameterListener ("Freq4", this);
-        treeState.addParameterListener ("Q4", this);
-        treeState.addParameterListener ("Gain4", this);
-        treeState.addParameterListener ("ActiveState4", this);
-    
-        treeState.addParameterListener ("Freq5", this);
-        treeState.addParameterListener ("Q5", this);
-        treeState.addParameterListener ("Gain5", this);
-        treeState.addParameterListener ("ActiveState5", this);  
+    for(int i = 0; i < 5; ++i)
+    {
+        treeState.addParameterListener ("Freq" + String(i), this);
+        treeState.addParameterListener ("Q" + String(i), this);
+        treeState.addParameterListener ("Gain" + String(i), this);
+        treeState.addParameterListener ("ActiveState" + String(i), this);
+    }
 
     treeState.addParameterListener ("Output", this);
     
@@ -467,91 +269,24 @@ bool ParametricEQ_ACAudioProcessor::isBusesLayoutSupported (const BusesLayout& l
 void ParametricEQ_ACAudioProcessor::parameterChanged (const String& param, float value)
 {
 
-        if (param == "Output") {
+        if (param == "Output")
             updatePlot();
-        }
 
-            auto* filterBand0 = getBand (0);
-            if (param == "Freq1") {
-                filterBand0->Freq = value;
-            }
-            else if (param == "Q1" ) {
-                filterBand0->Q = value;
-            }
-            else if (param == "Gain1") {
-                filterBand0->Gain = value;
-            }
-            else if (param == "ActiveState1") {
-                filterBand0->ActiveState = value >= 0.5f;
-            }
-    
-            updateBand (0);
-    
+        int i = 0;
 
-            auto* filterBand1 = getBand (1);
-            if (param == "Freq2") {
-                filterBand1->Freq = value;
-            }
-            else if (param == "Q2" ) {
-                filterBand1->Q = value;
-            }
-            else if (param == "Gain2") {
-                filterBand1->Gain = value;
-            }
-            else if (param == "ActiveState2") {
-                filterBand0->ActiveState = value >= 0.5f;
-            }
-    
-            updateBand (1);
+        if (param == "Freq")
+            getBand(i)->Freq = value;
 
-            auto* filterBand2 = getBand (2);
-            if (param == "Freq3") {
-                filterBand2->Freq = value;
-            }
-            else if (param == "Q3" ) {
-                filterBand2->Q = value;
-            }
-            else if (param == "Gain3") {
-                filterBand2->Gain = value;
-            }
-            else if (param == "ActiveState3") {
-                filterBand0->ActiveState = value >= 0.5f;
-            }
+        else if (param == "Q")
+            getBand(i)->Q = value;
+                
+        else if (param == "Gain" )
+            getBand(i)->Gain = value;
+                
+        else if (param == "ActiveState")
+            getBand(i)->ActiveState = value;
 
-            updateBand (2);
-
-
-            auto* filterBand3 = getBand (3);
-            if (param == "Freq4") {
-                filterBand3->Freq = value;
-            }
-            else if (param == "Q4" ) {
-                filterBand3->Q = value;
-            }
-            else if (param == "Gain4") {
-                filterBand3->Gain = value;
-            }
-            else if (param == "ActiveState4") {
-                filterBand0->ActiveState = value >= 0.5f;
-            }
-
-            updateBand (3);
-    
-            auto* filterBand4 = getBand (4);
-            if (param == "Freq5") {
-                filterBand4->Freq = value;
-            }
-            else if (param == "Q5" ) {
-                filterBand4->Q = value;
-            }
-            else if (param == "Gain5") {
-                filterBand4->Gain = value;
-            }
-            else if (param == "ActiveState5") {
-                filterBand0->ActiveState = value >= 0.5f;
-            }
-    
-            updateBand (4);
+            updateBand(i);
 
             return;
 
@@ -671,11 +406,6 @@ void ParametricEQ_ACAudioProcessor::updateBand (const size_t index)
                                                             filterInstances [index].magnitudes.data(),
                                                             frequencies.size(), sampleRate);
             
-            //       for (auto i = magnitudes.begin(); i != magnitudes.end(); ++i)
-            //       {
-            //           std::cout << *i << ' ';
-            //       }
-            
         }
         bypassState();
         updatePlot();
@@ -702,12 +432,10 @@ void ParametricEQ_ACAudioProcessor::setClickedBypass (int index)
 
 void ParametricEQ_ACAudioProcessor::bypassState()
 {
-    if (isPositiveAndBelow (clicked, filterInstances.size())) {
-        filterChain1.setBypassed<0>(!filterInstances[0].ActiveState);
-        filterChain1.setBypassed<1>(!filterInstances[1].ActiveState);
-        filterChain1.setBypassed<2>(!filterInstances[2].ActiveState);
-        filterChain1.setBypassed<3>(!filterInstances[3].ActiveState);
-        filterChain1.setBypassed<4>(!filterInstances[4].ActiveState);
+    if (isPositiveAndBelow (clicked, filterInstances.size()))
+    {
+        for(int i = 0; i < 5; ++i)
+            filterChain1.setBypassed<sizeof(i)>(!filterInstances[i].ActiveState);
     }
 }
 
@@ -735,15 +463,9 @@ bool ParametricEQ_ACAudioProcessor::checkForNewAnalyserData()
     return inputAnalyser.checkForNewData();
 }
 
-void ParametricEQ_ACAudioProcessor::getStateInformation (MemoryBlock& destData)
-{
+void ParametricEQ_ACAudioProcessor::getStateInformation (MemoryBlock& destData){}
 
-}
-
-void ParametricEQ_ACAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
-{
-
-}
+void ParametricEQ_ACAudioProcessor::setStateInformation (const void* data, int sizeInBytes){}
 
 //==============================================================================
 // This creates new instances of the plugin..

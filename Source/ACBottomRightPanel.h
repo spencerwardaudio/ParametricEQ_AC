@@ -19,6 +19,8 @@ public:
 
     ACBottomRightPanel(ParametricEQ_ACAudioProcessor* inProcessor);
     ~ACBottomRightPanel();
+    
+    void setupBypassButton(int cntrlPoints, juce::String name, bool attachment);
 
     void paint(Graphics& g) override;
     
@@ -32,7 +34,6 @@ private:
     
     std::unique_ptr<Label> label;
     
-    std::unique_ptr<TextButton> EQ1, EQ2, EQ3, EQ4, EQ5, LS, HS, FMode;
-    std::unique_ptr<AudioProcessorValueTreeState::ButtonAttachment> EQ1Attachments, EQ2Attachments, EQ3Attachments, EQ4Attachments, EQ5Attachments;
-
+    std::vector<std::unique_ptr<TextButton>> bypassButtons;
+    std::vector<std::unique_ptr<AudioProcessorValueTreeState::ButtonAttachment>> EQAttachment;
 };

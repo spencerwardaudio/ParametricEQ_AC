@@ -235,8 +235,6 @@ public:
        bool delegated{false}, mousing{false};
     
         int selectedDot;
-    
-    
    };
 
 

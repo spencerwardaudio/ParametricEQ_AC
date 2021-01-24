@@ -38,6 +38,8 @@ public:
     void resized() override;
     
     void changeListenerCallback (ChangeBroadcaster* sender) override;
+    
+    void bandVisible(int i, bool visible);
 //
 //    void XYClicked (XYController* xyControl) override
 //    {
@@ -65,26 +67,25 @@ public:
 
         void resized () override;
 
-        void setFrequency (float freq);
+        void setFrequency (int band, float freq);
 
-        void setGain (float Gain);
+        void setGain (int band, float Gain);
 
         void setType (int type);
 
         Path frequencyResponse;
         
+        std::vector<std::unique_ptr<Slider>> frequencyCutoffV;
+        std::vector<std::unique_ptr<Slider>> qV;
+        std::vector<std::unique_ptr<Slider>> gainV;
         
-        Slider              frequencyCutoff1, frequencyCutoff2, frequencyCutoff3, frequencyCutoff4, frequencyCutoff5, Q1, Q2,Q3,Q4,Q5,Gain1,Gain2,Gain3, Gain4, Gain5;
-        
+        std::vector<std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment>> attachments;
 
         private:
-            JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BandEditor)
-
-            size_t index;
-            ParametricEQ_ACAudioProcessor& processor;
-
-
-            OwnedArray<AudioProcessorValueTreeState::SliderAttachment> attachments;
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BandEditor)
+        
+        size_t index;
+        ParametricEQ_ACAudioProcessor& processor;
     };
     
 
@@ -96,7 +97,7 @@ private:
 
     static float getFrequencyForPosition (float pos);
 
-    OwnedArray<BandEditor>  bandEditors;
+    OwnedArray<BandEditor>  bandEditor;
 
     Rectangle<int>          plotFrame;
 

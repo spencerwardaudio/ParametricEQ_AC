@@ -12,15 +12,9 @@
 #include "ACInterfaceDefines.h"
 
 ACPanelBase::ACPanelBase(ParametricEQ_ACAudioProcessor* inProcessor)
-:   mProcessor(inProcessor)
-{
-    
-}
+:   mProcessor(inProcessor){}
 
-ACPanelBase::~ACPanelBase()
-{
-    
-}
+ACPanelBase::~ACPanelBase(){}
 
 void ACPanelBase::mouseEnter (const MouseEvent& event)
 {

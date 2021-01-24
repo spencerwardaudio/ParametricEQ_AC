@@ -10,6 +10,16 @@
 
 #include "ACBottomRightPanel.h"
 
+Component* getChildComponentWithName(Component* cParent, const juce::String& name)
+{
+    for(auto&& component : cParent->getChildren())
+    {
+        if (component->getName() == name)
+            return component;
+    }
+    return nullptr;
+}
+
 ACBottomRightPanel::ACBottomRightPanel(ParametricEQ_ACAudioProcessor* inProcessor)
 :   ACPanelBase(inProcessor)
 {
@@ -17,115 +27,40 @@ ACBottomRightPanel::ACBottomRightPanel(ParametricEQ_ACAudioProcessor* inProcesso
     label = std::make_unique<Label>("", "Active");
     addAndMakeVisible(label.get());
     label->setJustificationType(Justification::centred);
+    
+    setupBypassButton(1, "EQ", true);
+        
+    // For FMode, LS, HS, "Mode1", "Mode2"
+    //    LS->setButtonText("LS");
+//    setupBypassButton(3, "EQMode", false);
 
-    int button_x = 60;
-    int button_y = 26;
-    int button_w = 15;
-    int button_h = 15;
-
-    
-    EQ1 = std::make_unique<TextButton>();
-    EQ1->setBounds(button_x, button_y, button_w, button_h);
-    EQ1->addListener(this);
-    addAndMakeVisible(EQ1.get());
-    
-    EQ1Attachments = std::make_unique<AudioProcessorValueTreeState::ButtonAttachment>(mProcessor->getTreeState(), "ActiveState1", *EQ1);
-    
-    button_x = button_x + button_w;
-    
-    EQ2 = std::make_unique<TextButton>();
-    EQ2->setBounds(button_x, button_y, button_w, button_h);
-    EQ2->addListener(this);
-    addAndMakeVisible(EQ2.get());
-    
-    EQ2Attachments = std::make_unique<AudioProcessorValueTreeState::ButtonAttachment>(mProcessor->getTreeState(), "ActiveState2", *EQ2);
-    
-    button_x = button_x + button_w;
-    
-    EQ3 = std::make_unique<TextButton>();
-    EQ3->setBounds(button_x, button_y, button_w, button_h);
-    EQ3->addListener(this);
-    addAndMakeVisible(EQ3.get());
-    
-    EQ3Attachments = std::make_unique<AudioProcessorValueTreeState::ButtonAttachment>(mProcessor->getTreeState(), "ActiveState3", *EQ3);
-    
-    button_x = button_x + button_w;
-    
-    EQ4 = std::make_unique<TextButton>();
-    EQ4->setBounds(button_x, button_y, button_w, button_h);
-    EQ4->addListener(this);
-    addAndMakeVisible(EQ4.get());
-    
-    EQ4Attachments = std::make_unique<AudioProcessorValueTreeState::ButtonAttachment>(mProcessor->getTreeState(), "ActiveState4", *EQ4);
-    
-    button_x = button_x + button_w;
-    
-    EQ5 = std::make_unique<TextButton>();
-    EQ5->setBounds(button_x, button_y, button_w, button_h);
-    EQ5->addListener(this);
-    addAndMakeVisible(EQ5.get());
-    
-    EQ5Attachments = std::make_unique<AudioProcessorValueTreeState::ButtonAttachment>(mProcessor->getTreeState(), "ActiveState5", *EQ5);
-    
-    //Second Row
-    button_x = 15;
-    button_y = button_y + button_h + 8;
-    button_w = 55;
-    button_h = 30;
-    
-    FMode = std::make_unique<TextButton>();
-    FMode->setButtonText("Mode1");
-    FMode->setBounds(button_x, button_y, button_w, button_h);
-    FMode->addListener(this);
-    addAndMakeVisible(FMode.get());
-    button_x = button_x + button_w;
-    
-    button_w = 35;
-    
-    LS = std::make_unique<TextButton>();
-    LS->setButtonText("LS");
-    LS->setBounds(button_x, button_y, button_w, button_h);
-    LS->addListener(this);
-    addAndMakeVisible(LS.get());
-    button_x = button_x + button_w;
-    
-    HS = std::make_unique<TextButton>();
-    HS->setButtonText("HS");
-    HS->setBounds(button_x, button_y, button_w, button_h);
-    HS->addListener(this);
-    addAndMakeVisible(HS.get());
-    button_x = button_x + button_w;
-    
-    
-    EQ1->onClick = [this] { updateToggleState (EQ1.get(), "1"); };
-    EQ2->onClick = [this] { updateToggleState (EQ2.get(), "2"); };
-    EQ3->onClick = [this] { updateToggleState (EQ3.get(), "3"); };
-    EQ4->onClick = [this] { updateToggleState (EQ4.get(), "4"); };
-    EQ5->onClick = [this] { updateToggleState (EQ5.get(), "5"); };
-    
-    FMode->onClick = [this] { updateToggleState (FMode.get(), "Mode1"); };
-    
-    LS->onClick = [this] { updateToggleState (LS.get(), "LS"); };
-    HS->onClick = [this] { updateToggleState (HS.get(), "HS"); };
-    
-    EQ1->setClickingTogglesState(true);
-    EQ2->setClickingTogglesState(true);
-    EQ3->setClickingTogglesState(true);
-    EQ4->setClickingTogglesState(true);
-    EQ5->setClickingTogglesState(true);
-    
-    FMode->setClickingTogglesState(true);
-    
-    LS->setClickingTogglesState(true);
-    HS->setClickingTogglesState(true);
-    
     setSize(BOTTOM_RIGHT_PANEL_WIDTH, BOTTOM_RIGHT_PANEL_HEIGHT);
 
 }
 
-ACBottomRightPanel::~ACBottomRightPanel()
+ACBottomRightPanel::~ACBottomRightPanel(){}
+
+void ACBottomRightPanel::setupBypassButton(int cntrlPoints, juce::String name, bool attachmentCnt)
 {
-    
+    for( int control = 0; control < cntrlPoints; ++control )
+    {
+        auto bypassButton = std::make_unique<TextButton>(name + String(control));
+        bypassButton->addListener(this);
+        addAndMakeVisible(bypassButton.get());
+        
+        if(attachmentCnt)
+        {
+            auto buttonAttachment = std::make_unique<AudioProcessorValueTreeState::ButtonAttachment>(mProcessor->getTreeState(), "ActiveState1" /*+ String(sizeof(bypassButtons))*/, *bypassButton);
+            EQAttachment.push_back(std::move(buttonAttachment));
+        }
+
+        bypassButton->onClick = [&] { updateToggleState(bypassButton.get(), "1"); };
+        bypassButton->setClickingTogglesState(true);
+        
+        std::cout << bypassButton->getName() << std::endl;
+        
+        bypassButtons.push_back(std::move(bypassButton));
+    }
 }
 
 void ACBottomRightPanel::paint(Graphics& g)
@@ -141,19 +76,72 @@ void ACBottomRightPanel::paint(Graphics& g)
     g.setColour (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
     g.setColour(Colours::white);
     g.drawFittedText ("Active:", 20, 22, 80, 20, Justification::left, 1);
-    
-    
 }
 
 void ACBottomRightPanel::resized()
 {
+    Rectangle<int> bounds = getLocalBounds().removeFromTop(30);
+    // margin1 = 60
+    bounds.removeFromLeft(60);
+//
+    Grid grid;
 
+    using Track = Grid::TrackInfo;
+    using Fr = Grid::Fr;
+//
+    grid.templateRows    = { Track (Fr (1)) };
+    grid.templateColumns = { Track (Fr (1)), Track (Fr (1)), Track (Fr (1)), Track (Fr (1)), Track (Fr (1)) };
+
+//    for(int i = 0; i < 5; ++i)
+//    {
+        grid.items = juce::GridItem (bypassButtons[0].get());
+//    }
+//
+    grid.performLayout (bounds.removeFromTop(49));
+//
+//    Grid grid2;
+//
+//    using Track = Grid::TrackInfo;
+//    using Fr = Grid::Fr;
+//
+//    grid.templateRows    = { Track (Fr (1)) };
+//    grid.templateColumns = { Track (Fr (1)), Track (Fr (1)), Track (Fr (1)) };
+//
+//    grid.items =
+//    {
+//            juce::GridItem (bypassButtons[0].get())
+//    };
+//
+//    // margin2 = 15
+//    bounds.removeFromLeft(15);
+//
+//    grid.performLayout (bounds.removeFromTop(49));
+    
+    
+    
+    
+//    auto bounds = getLocalBounds();
+//    auto rectTop = bounds.removeFromTop (40);
+//    bounds.removeFromRight (40);
+//    bounds.reduce (40, 40);
+//
+//    rectTop.reduce (10, 0);
+//    lookAndFeelButton->setBounds (rectTop.removeFromRight(120).withSizeKeepingCentre(120, 24));
+//
+//    Grid grid;
+//    using Track = Grid::TrackInfo;
+//    using Fr = Grid::Fr;
+//
+//    grid.items.add(GridItem(lpfSlider.get()));
+//    grid.items.add(GridItem (volumeSlider.get()));
+//
+//    grid.templateColumns = { Track (Fr (1)), Track (Fr (1)), Track (Fr (1)), Track (Fr (1)) };
+//    grid.templateRows = { Track (Fr (1)), Track (Fr (1)) };
+//    grid.columnGap = Grid::Px (10);
+//    grid.rowGap = Grid::Px (10);
 }
 
-void ACBottomRightPanel::buttonClicked (Button* b)
-{
-
-}
+void ACBottomRightPanel::buttonClicked (Button* b){}
 
 void ACBottomRightPanel::updateToggleState (Button* button, juce::String name)
 {
@@ -163,30 +151,18 @@ void ACBottomRightPanel::updateToggleState (Button* button, juce::String name)
     auto baseColour = juce::Colours::lightblue;
     if (state)
     {
-        EQ1->setColour(juce::TextButton::buttonOnColourId, baseColour);
-        EQ2->setColour(juce::TextButton::buttonOnColourId, baseColour);
-        EQ3->setColour(juce::TextButton::buttonOnColourId, baseColour);
-        EQ4->setColour(juce::TextButton::buttonOnColourId, baseColour);
-        EQ5->setColour(juce::TextButton::buttonOnColourId, baseColour);
- 
-        if (button == FMode.get())
-        {
-        FMode->setButtonText("Mode2");
-        }
-        
-        LS->setColour(juce::TextButton::buttonOnColourId, baseColour);
-        HS->setColour(juce::TextButton::buttonOnColourId, baseColour);
-        
-        mProcessor->setClickedBypass(0);
-        mProcessor->setClickedBypass(1);
-        mProcessor->setClickedBypass(2);
-        mProcessor->setClickedBypass(3);
-        mProcessor->setClickedBypass(4);
-    }
-    else if (button == FMode.get())
-    {
-//        if (FMode->clicked)
-        FMode->setButtonText("Mode1");
-    }
+        //EQ1 to 5 + LS & HS
+        for( auto&& bypass : bypassButtons)
+            bypass->setColour(juce::TextButton::buttonOnColourId, baseColour);
 
+//        if (button == getChildComponentWithName(this, "EQ1")) // bypassButton[5].get())
+//            button->setButtonText("Mode2");
+//
+//        for(int i = 0; i < 5; ++i)
+            mProcessor->setClickedBypass(0);
+//    }
+//    //        if (FMode->clicked)
+//    else if (button == getChildComponentWithName(this, "EQMode1"))
+//        button->setButtonText("Mode1");
+    }
 }
